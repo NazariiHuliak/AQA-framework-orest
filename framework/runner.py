@@ -12,7 +12,7 @@ class BDDRunner:
         steps = p.parse(fname)
 
         ctx = Context()
-        ctx.driver = Driver(browser="chrome", headless=False, uc=True)
+        ctx.driver = Driver(browser="chrome", headless=True, uc=True)
 
         for t, txt in steps:
             func, args = registry.match(t, txt)
