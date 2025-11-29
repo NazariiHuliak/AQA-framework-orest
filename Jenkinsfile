@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/username/repo.git', branch: 'test'
+                git url: 'https://github.com/Orik25/AQA-framework', branch: 'test'
             }
         }
 
