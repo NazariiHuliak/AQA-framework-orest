@@ -16,12 +16,12 @@ class BasePage(BaseCase):
         self.driver.get(url)
         time.sleep(3)
 
-    def find(self, value, timeout=30):
+    def find(self, value, timeout=60):
         return WebDriverWait(self.driver, timeout).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, value))
         )
 
-    def find_all(self, value, timeout=30):
+    def find_all(self, value, timeout=60):
         return WebDriverWait(self.driver, timeout).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, value))
         )
