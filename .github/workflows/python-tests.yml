@@ -29,4 +29,5 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest tests -v
+          pytest tests\run_all_tests.py
+
