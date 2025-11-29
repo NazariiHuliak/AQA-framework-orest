@@ -3,8 +3,10 @@ from .parser import FeatureParser
 from .context import Context
 from .dsl import registry
 
-import steps.common_steps
+import steps.sorting_steps
 import steps.search_steps
+import steps.common_steps
+import steps.lang_change_steps
 
 class BDDRunner:
     def run_feature(self, fname):

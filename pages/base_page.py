@@ -16,9 +16,9 @@ class BasePage(BaseCase):
         self.driver.get(url)
         time.sleep(3)
 
-    def find(self, value, timeout=60):
+    def find(self, value, by=By.CSS_SELECTOR, timeout=60):
         return WebDriverWait(self.driver, timeout).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, value))
+            EC.presence_of_element_located((by, value))
         )
 
     def find_all(self, value, timeout=60):
@@ -26,8 +26,11 @@ class BasePage(BaseCase):
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, value))
         )
 
-    def click(self, selector):
-        self.driver.click(selector)
+    def click(self, value, by=By.CSS_SELECTOR, timeout=60):
+        element = WebDriverWait(self.driver, timeout).until(
+            EC.element_to_be_clickable((by, value))
+        )
+        element.click()
 
     def type(self, selector, text):
         self.driver.type(selector, text)
