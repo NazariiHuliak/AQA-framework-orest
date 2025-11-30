@@ -35,7 +35,6 @@ pipeline {
         stage('Run tests') {
             steps {
                 sh """
-                    export PYTHONPATH=$PYTHONPATH:$(pwd)
                     pytest tests/run_all_tests.py
                 """
             }
