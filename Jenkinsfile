@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        PYTHON_PATH = "C:\\Users\\Orik\\AppData\\Local\\Programs\\Python\\Python311\\python.exe"
-    }
-
     stages {
 
         stage('Install dependencies') {
