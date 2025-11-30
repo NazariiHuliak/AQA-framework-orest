@@ -1,36 +1,43 @@
 pipeline {
-    agent any
-
-    environment {
-        PYTHONPATH = "%WORKSPACE%"
+    agent {
+        docker {
+            image 'python:3.11'
+            args '-u root'
+        }
     }
 
     stages {
 
-        stage('Setup Python') {
+        stage('Install Chrome') {
             steps {
-                bat """
-                python --version
-                pip install --upgrade pip
+                sh """
+                    apt-get update
+                    apt-get install -y wget gnupg unzip \
+                    xvfb libnss3 libxss1 libatk1.0-0 \
+                    libcups2 libdrm2 libxcomposite1 libxrandr2 \
+                    libgbm1 libpango-1.0-0 libpangocairo-1.0-0 \
+                    libasound2t64 libatspi2.0-0 libgtk-3-0
+
+                    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+                    dpkg -i google-chrome-stable_current_amd64.deb || apt --fix-broken install -y
                 """
             }
         }
 
-        stage('Install Python dependencies') {
+        stage('Install dependencies') {
             steps {
-                bat """
-                if exist requirements.txt (
-                    pip install -r requirements.txt
-                )
+                sh """
+                    python -m pip install --upgrade pip
+                    if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
                 """
             }
         }
 
         stage('Run tests') {
             steps {
-                bat """
-                set PYTHONPATH=%PYTHONPATH%;%WORKSPACE%
-                python -m pytest tests/run_all_tests.py
+                sh """
+                    export PYTHONPATH=\$PYTHONPATH:$(pwd)
+                    python -m pytest tests/run_all_tests.py
                 """
             }
         }
