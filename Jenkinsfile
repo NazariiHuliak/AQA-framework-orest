@@ -5,43 +5,39 @@ pipeline {
         PYTHONPATH = "${env.WORKSPACE}"
     }
 
+    agent {
+        docker {
+            image 'python:3.11'
+            args '-u root'
+        }
+    }
+
     stages {
-        stage('Checkout') {
+        stage('Install dependencies') {
             steps {
-                git url: 'https://github.com/Orik25/AQA-framework', branch: 'test'
+                sh """
+                    apt-get update
+                    apt-get install -y wget gnupg unzip \
+                    xvfb libnss3 libxss1 libatk1.0-0 \
+                    libcups2 libdrm2 libxcomposite1 libxrandr2 \
+                    libgbm1 libpango-1.0-0 libpangocairo-1.0-0 \
+                    libasound2t64 libatspi2.0-0 libgtk-3-0
+
+                    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+                    dpkg -i google-chrome-stable_current_amd64.deb || apt --fix-broken install -y
+
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                """
             }
         }
 
-        stage('Set up Python & Dependencies') {
+        stage('Run tests') {
             steps {
-                script {
-                    sh '''
-                        python3 --version || sudo apt-get update && sudo apt-get install -y python3.11 python3.11-venv python3.11-dev python3-pip
-                        python3 -m pip install --upgrade pip
-                    '''
-
-                    sh '''
-                        sudo apt-get install -y wget gnupg unzip xvfb libnss3 libxss1 libatk1.0-0 \
-                        libcups2 libdrm2 libxcomposite1 libxrandr2 libgbm1 libpango-1.0-0 \
-                        libpangocairo-1.0-0 libasound2 libatspi2.0-0 libgtk-3-0
-
-                        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-                        sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt --fix-broken install -y
-                    '''
-
-                    sh '''
-                        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-                    '''
-                }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                sh '''
+                sh """
                     export PYTHONPATH=$PYTHONPATH:$(pwd)
-                    python -m pytest tests/run_all_tests.py
-                '''
+                    pytest tests/run_all_tests.py
+                """
             }
         }
     }
