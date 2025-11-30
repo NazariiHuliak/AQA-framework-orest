@@ -6,8 +6,8 @@ pipeline {
         stage('Install dependencies') {
             steps {
                 bat """
-                    "%PYTHON_PATH%" -m pip install --upgrade pip
-                    if exist requirements.txt "%PYTHON_PATH%" -m pip install -r requirements.txt
+                    python -m pip install --upgrade pip
+                    if exist requirements.txt python -m pip install -r requirements.txt
                 """
             }
         }
@@ -15,7 +15,7 @@ pipeline {
         stage('Run tests') {
             steps {
                 bat """
-                    "%PYTHON_PATH%" -m pytest tests\\run_all_tests.py --junitxml=test-reports\\results.xml
+                    python -m pytest tests\\run_all_tests.py --junitxml=test-reports\\results.xml
                 """
             }
         }
